@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <link id="favicon" rel="icon" type="image/png" href="">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Links - CESAR School</title>
@@ -93,6 +94,8 @@
             setTimeout(() => {
                 if (typeof CONFIG !== 'undefined') {
                     // Aplica Variáveis
+                    document.title = CONFIG.nomePagina;
+                    document.getElementById('favicon').href = CONFIG.caminhoFavicon;
                     document.documentElement.style.setProperty('--bg-color', CONFIG.cores.fundo);
                     document.documentElement.style.setProperty('--button-color', CONFIG.cores.botoes);
                     document.documentElement.style.setProperty('--text-color', CONFIG.cores.texto);
@@ -141,4 +144,5 @@
         }
     </script>
 </body>
+
 </html>
