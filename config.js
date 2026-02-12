@@ -1,5 +1,7 @@
 const CONFIG = {
     // Texto central e título
+    nomePagina: "Links - Banco de Dados CESAR",
+    caminhoFavicon: "Logo.png", // Icone que aparece no topo do navegador
     tituloPrincipal: "BANCO DE DADOS CESAR 2026.1",
     subtitulo: "Links Úteis",
     textoInformativo: "Página opensource para auxílio na organização das informações.",
@@ -18,4 +20,5 @@ const CONFIG = {
         { texto: "Horários - Turmas Banco de Dados", url: "https://docs.google.com/spreadsheets/d/1t08XxohH77ISgQHgYT_B6Ek5TbPCB3jhYTq13r8kREk/edit?gid=61666093#gid=61666093" },
         { texto: "Manual do estudante 2025.2", url: "https://drive.google.com/file/d/1fpUxnOsYP123YRaCTnLq7jALZRvU9zox/view" },
     ]
+
 };
