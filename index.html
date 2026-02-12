@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links - CESAR School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="config.js"></script>
+    <style>
+        :root { --bg-color: #e35a00; --button-color: #f26b1d; --text-color: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; padding: 40px 20px; }
+        .container { width: 100%; max-width: 450px; text-align: center; }
+        
+        /* Estado Inicial: Esconde conteúdo enquanto carrega */
+        #content-wrapper { display: none; opacity: 0; transition: opacity 0.5s ease; }
+        #loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; }
+        
+        /* Spinner simples */
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .top-icons { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn-share-img { background: rgba(255, 255, 255, 0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
+        .btn-share-img img { width: 20px; height: 20px; }
+        .logo { width: 120px; margin-bottom: 20px; }
+        h1 { font-size: 1.4rem; text-transform: uppercase; margin-bottom: 8px; }
+        .subtitle { font-size: 1rem; margin-bottom: 30px; opacity: 0.9; }
+        .links-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        .link-card { background-color: var(--button-color); color: white; text-decoration: none; padding: 16px; border-radius: 50px; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .link-card:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* MODAL */
+        #share-modal { display: none; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: white; border-radius: 20px 20px 0 0; padding: 20px; z-index: 1000; color: #1e1e1e; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-btn { cursor: pointer; font-size: 1.5rem; border: none; background: none; }
+        .share-grid { display: flex; justify-content: center; gap: 30px; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 15px; }
+        .share-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; color: #1e1e1e; font-size: 0.75rem; }
+        .share-icon { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f3f3f1; font-size: 1.3rem; }
+        #qr-container { display: none; text-align: center; padding: 15px; }
+        #qr-container img { width: 200px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; }
+        .qr-help-text { font-size: 0.8rem; color: #666; margin-bottom: 15px; }
+        .btn-download { background: #eee; border: none; padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+        .info-text { font-size: 0.9rem; opacity: 0.85; margin-top: 20px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+    
+    <div class="container">
+        <div id="loading-state">
+            <div class="spinner"></div>
+            <p>Carregando informações...</p>
+        </div>
+
+        <div id="content-wrapper">
+            <div class="top-icons">
+                <button class="btn-share-img" onclick="openModal()">
+                    <img src="Share.png" alt="Share">
+                </button>
+            </div>
+            <img src="Logo.png" alt="Logo" class="logo">
+            <h1 id="title"></h1>
+            <p class="subtitle" id="subtitle"></p>
+            <div class="links-container" id="links-list"></div>
+            <p class="info-text" id="footer-text"></p>
+        </div>
+    </div>
+
+    <div id="share-modal">
+        <div class="modal-header"><h3>Compartilhar</h3><button class="close-btn" onclick="closeModal()">&times;</button></div>
+        <div class="share-grid">
+            <div class="share-item" onclick="copyLink()"><div class="share-icon">🔗</div><span>Copiar</span></div>
+            <div class="share-item" onclick="showQR()"><div class="share-icon">📱</div><span>QR Code</span></div>
+            <a href="#" id="share-wpp" class="share-item" target="_blank"><div class="share-icon" style="background: #25D366; color: white;">📞</div><span>WhatsApp</span></a>
+        </div>
+        <div id="qr-container">
+            <div id="qr-image"></div>
+            <p class="qr-help-text">Aponte a câmera para escanear</p>
+            <button class="btn-download" onclick="downloadQR()">📥 Baixar QR Code</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => {
+            // Pequeno delay artificial (500ms) para garantir que a transição seja suave
+            setTimeout(() => {
+                if (typeof CONFIG !== 'undefined') {
+                    // Aplica Variáveis
+                    document.documentElement.style.setProperty('--bg-color', CONFIG.cores.fundo);
+                    document.documentElement.style.setProperty('--button-color', CONFIG.cores.botoes);
+                    document.documentElement.style.setProperty('--text-color', CONFIG.cores.texto);
+                    
+                    // Preenche Conteúdo
+                    document.getElementById('title').innerText = CONFIG.tituloPrincipal;
+                    document.getElementById('subtitle').innerText = CONFIG.subtitulo;
+                    document.getElementById('footer-text').innerText = CONFIG.textoInformativo;
+
+                    const container = document.getElementById('links-list');
+                    CONFIG.meusLinks.forEach(link => {
+                        const a = document.createElement('a');
+                        a.href = link.url; a.className = 'link-card'; a.target = '_blank'; a.innerText = link.texto;
+                        container.appendChild(a);
+                    });
+
+                    // Alterna Visibilidade
+                    document.getElementById('loading-state').style.display = 'none';
+                    const content = document.getElementById('content-wrapper');
+                    content.style.display = 'block';
+                    setTimeout(() => content.style.opacity = '1', 50);
+                }
+            }, 500);
+        };
+
+        function openModal() { document.getElementById('share-modal').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; document.getElementById('share-wpp').href = `https://api.whatsapp.com/send?text=Confira os links: ${window.location.href}`; }
+        function closeModal() { document.getElementById('share-modal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; document.getElementById('qr-container').style.display = 'none'; }
+        function copyLink() { navigator.clipboard.writeText(window.location.href); alert("Link copiado!"); }
+        
+        function showQR() { 
+            const url = encodeURIComponent(window.location.href); 
+            document.getElementById('qr-image').innerHTML = `<img id="qr-img-src" src="https://quickchart.io/qr?text=${url}&size=200">`; 
+            document.getElementById('qr-container').style.display = 'block'; 
+        }
+
+        async function downloadQR() {
+            const img = document.getElementById('qr-img-src');
+            const response = await fetch(img.src);
+            const blob = await response.blob();
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "qrcode_cesar.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
