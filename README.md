@@ -32,8 +32,6 @@ Para adaptar esta página à sua turma ou projeto:
 
 Este projeto foi estruturado para ser hospedado gratuitamente no GitHub Pages.
 
-> **Dica de Privacidade:** Se você deseja manter seus links reais protegidos, hospede o código em um **Repositório Privado** e ative o GitHub Pages. O site ficará público, mas o seu código e arquivos de configuração estarás protegidos contra acesso direto no repositório.
-
 ## 📄 Licença
 
 Este projeto é **opensource**. Sinta-se livre para usar, modificar e distribuir para sua comunidade acadêmica.
